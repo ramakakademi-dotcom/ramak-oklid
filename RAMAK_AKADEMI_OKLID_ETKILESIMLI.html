@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RAMAK AKADEMİ | Öklid Bağıntıları</title>
+<style>
+:root{--navy:#102744;--gold:#d4aa52;--blue:#3c8bc8;--text:#edf4ff;--muted:#a9bed4}
+*{box-sizing:border-box}body{margin:0;background:#081727;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:850px;margin:auto;padding:16px 12px 45px}.header{text-align:center;padding:18px 8px}.brand{color:var(--gold);font-size:15px;font-weight:800;letter-spacing:3px}.header h1{margin:8px 0;font-size:clamp(24px,5vw,35px)}.sub{color:var(--muted);font-size:13px}
+.card{background:var(--navy);border:1px solid #35506c;border-radius:18px;padding:15px;margin:12px 0;box-shadow:0 5px 22px #0002}
+svg{width:100%;height:auto;display:block;overflow:visible}.tools,.tabs,.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+button{min-height:44px;background:#213e60;border:1px solid #54708d;border-radius:11px;color:#fff;padding:10px 8px;font-weight:700;cursor:pointer;font-size:14px}button.primary,button.active{background:var(--gold);color:#12243c;border-color:var(--gold)}
+button:focus-visible{outline:3px solid white;outline-offset:2px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.metric{background:#091e34;border-radius:10px;text-align:center;padding:10px 3px}.metric small{display:block;color:var(--muted);font-size:11px}.metric b{font-size:clamp(14px,3.6vw,21px);color:var(--gold)}
+label{display:flex;justify-content:space-between;gap:8px;font-weight:600;font-size:14px;margin:12px 0 5px}input[type=range]{width:100%;accent-color:var(--gold)}.formula{font:700 clamp(29px,7vw,44px) Georgia,serif;text-align:center;color:#f2cb78;padding:12px}.explain{text-align:center;color:#c9d8e9;line-height:1.55}
+.proof{border-left:3px solid var(--gold);padding-left:12px;margin-top:15px;line-height:1.55}.proof strong{color:var(--gold);font-size:12px;letter-spacing:1px}
+.answers{grid-template-columns:repeat(3,1fr)}.feedback{min-height:30px;margin-top:12px;color:#cbd8e7}.footer{text-align:center;color:#9eb1c5;font-size:12px;padding:20px}.status{color:var(--gold);font-size:12px}.eq{color:#f0d48d;font-size:14px;font-weight:700;text-align:center}
+@media(min-width:650px){main{padding:25px}.card{padding:22px}.tabs{grid-template-columns:repeat(4,1fr)}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style></head>
+<body><main>
+<header class="header"><div class="brand">RAMAK AKADEMİ</div><h1>Dik Üçgende Öklid Bağıntıları</h1><div class="sub">Etkileşimli Matematik Laboratuvarı · Başarıya RAMAK Kaldı.</div></header>
+<section class="card">
+<div style="display:flex;justify-content:space-between;align-items:center"><strong>CANLI GEOMETRİ TAHTASI</strong><span class="status" id="status">ABC dik üçgeni</span></div>
+<svg id="board" viewBox="0 0 440 320" role="img" aria-label="ABC dik üçgeni; A açısı dik, A noktasından hipotenüs BC üzerine AH yüksekliği indiriliyor.">
+<defs><linearGradient id="tri" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#318edb" stop-opacity=".24"/><stop offset="1" stop-color="#d4aa52" stop-opacity=".07"/></linearGradient></defs>
+<polygon id="triangle" fill="url(#tri)" stroke="#64b6f2" stroke-width="3.3" stroke-linejoin="round"/>
+<polygon id="shade1" fill="#e6b24e" fill-opacity="0"/><polygon id="shade2" fill="#50d5bf" fill-opacity="0"/>
+<path id="alt" stroke="#f6c15a" stroke-width="3.5" stroke-dasharray="8 6" fill="none"/>
+<path id="angleA" stroke="#f3f6ff" stroke-width="2" fill="none"/><path id="angleH" stroke="#f6c15a" stroke-width="2" fill="none"/>
+<g id="labels"></g></svg>
+<div class="eq">a = p + k</div>
+<div class="metrics"><div class="metric"><small>a</small><b id="m-a"></b></div><div class="metric"><small>h</small><b id="m-h"></b></div><div class="metric"><small>p</small><b id="m-p"></b></div><div class="metric"><small>k</small><b id="m-k"></b></div></div>
+<div class="tools"><button class="primary" id="drop">▶ Dikmeyi indir</button><button id="reset">↺ Baştan başlat</button></div>
+</section>
+<section class="card">
+<label for="shape">H noktasını hareket ettir <span id="shapeValue">%64</span></label><input id="shape" type="range" min="12" max="88" value="64">
+<label for="length">Hipotenüs uzunluğu <span id="lengthValue">10 birim</span></label><input id="length" type="range" min="6" max="16" value="10" step=".5">
+<p class="sub">Kaydırıcıları değiştirdiğinizde dik açı ve Öklid bağıntıları korunur.</p>
+</section>
+<section class="card">
+<strong>4 BAĞINTIYI KEŞFET</strong><div class="tabs" id="tabs">
+<button class="active" data-r="0">1 · Yükseklik</button><button data-r="1">2 · AB kenarı</button><button data-r="2">3 · AC kenarı</button><button data-r="3">4 · Alan</button></div>
+<h2 id="ruleTitle" style="font-size:20px;margin-bottom:4px">Yükseklik bağıntısı</h2>
+<div class="formula" id="formula">h² = p · k</div><div class="explain" id="description"></div>
+<div class="proof"><strong>SAYISAL DOĞRULAMA</strong><div id="calculation"></div><div id="equality"></div></div>
+<div class="proof"><strong>BENZERLİK / GEREKÇE</strong><div id="proof"></div></div>
+<div class="tools"><button id="prev">← Önceki</button><button class="primary" id="next">Sonraki →</button></div>
+</section>
+<section class="card"><strong>ÖĞRENDİĞİNİ KONTROL ET</strong><p id="question"></p><div class="answers" id="answers"></div><div class="feedback" id="feedback" aria-live="polite"></div><button id="newQuestion" class="primary" style="width:100%">↻ Sonraki soru</button></section>
+<div class="footer">© RAMAK AKADEMİ · Matematik ve Geometri · Öğrenmeyi Öğrenme</div>
+</main>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const ns='http://www.w3.org/2000/svg';
+const f=n=>Number(n).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+let ratio=.64,a=10,progress=0,rule=0,frame=null,quiz=0;
+const rules=[
+['Yükseklik bağıntısı','h² = p · k','Yüksekliğin karesi, hipotenüs üzerinde oluşan iki parçanın çarpımıdır.','AHB ve AHC üçgenleri benzerdir. p/h = h/k ⇒ h² = p·k.',v=>[v.h*v.h,v.p*v.k,`${f(v.h)}² = ${f(v.p)} × ${f(v.k)}`]],
+['AB dik kenar bağıntısı','c² = a · p','AB kenarının karesi, hipotenüs ile AB kenarının hipotenüs üzerindeki izdüşümünün çarpımıdır.','ABH ve ABC üçgenleri benzerdir. p/c = c/a ⇒ c² = a·p.',v=>[v.c*v.c,v.a*v.p,`${f(v.c)}² = ${f(v.a)} × ${f(v.p)}`]],
+['AC dik kenar bağıntısı','b² = a · k','AC kenarının karesi, hipotenüs ile AC kenarının hipotenüs üzerindeki izdüşümünün çarpımıdır.','AHC ve ABC üçgenleri benzerdir. k/b = b/a ⇒ b² = a·k.',v=>[v.b*v.b,v.a*v.k,`${f(v.b)}² = ${f(v.a)} × ${f(v.k)}`]],
+['Alan bağıntısı','b · c = a · h','Dik kenarların çarpımı, hipotenüs ile ona ait yüksekliğin çarpımına eşittir.','Üçgen alanı hem b·c/2 hem de a·h/2 olduğundan b·c = a·h.',v=>[v.b*v.c,v.a*v.h,`${f(v.b)} × ${f(v.c)} = ${f(v.a)} × ${f(v.h)}`]]
+];
+function values(){let p=a*ratio,k=a-p,h=Math.sqrt(p*k);return {a,p,k,h,b:Math.sqrt(a*k),c:Math.sqrt(a*p)}}
+function pt(x,y){return `${x.toFixed(2)},${y.toFixed(2)}`}
+function text(x,y,t,color='#eaf2ff',size=17){let e=document.createElementNS(ns,'text');for(const [k,v] of Object.entries({x,y,fill:color,'font-size':size,'text-anchor':'middle','font-weight':'700'}))e.setAttribute(k,v);e.textContent=t;$('labels').appendChild(e)}
+function draw(){
+const v=values(),B={x:45,y:273},C={x:395,y:273},H={x:45+350*ratio,y:273},A={x:H.x,y:273-v.h*350/a};
+$('triangle').setAttribute('points',[pt(A.x,A.y),pt(B.x,B.y),pt(C.x,C.y)].join(' '));
+$('shade1').setAttribute('points',[pt(A.x,A.y),pt(B.x,B.y),pt(H.x,H.y)].join(' '));
+$('shade2').setAttribute('points',[pt(A.x,A.y),pt(H.x,H.y),pt(C.x,C.y)].join(' '));
+$('shade1').setAttribute('fill-opacity',progress>.99&&[0,1].includes(rule)?'.2':'0');
+$('shade2').setAttribute('fill-opacity',progress>.99&&[0,2].includes(rule)?'.2':'0');
+let T={x:A.x,y:A.y+(H.y-A.y)*progress};$('alt').setAttribute('d',`M${pt(A.x,A.y)} L${pt(T.x,T.y)}`);
+$('alt').style.opacity=progress>0?1:0;
+let ux=(B.x-A.x)/(v.c*350/a),uy=(B.y-A.y)/(v.c*350/a),vx=(C.x-A.x)/(v.b*350/a),vy=(C.y-A.y)/(v.b*350/a),s=13;
+let P={x:A.x+s*ux,y:A.y+s*uy},Q={x:A.x+s*vx,y:A.y+s*vy},R={x:P.x+s*vx,y:P.y+s*vy};
+$('angleA').setAttribute('d',`M${pt(P.x,P.y)} L${pt(R.x,R.y)} L${pt(Q.x,Q.y)}`);
+$('angleH').setAttribute('d',`M${H.x-11},${H.y} v-11 h11`);$('angleH').style.opacity=progress>.99?1:0;
+$('labels').replaceChildren();
+text(A.x,A.y-14,'A','#f4c366',20);text(28,293,'B','#8dceff',19);text(412,293,'C','#8dceff',19);
+text((A.x+B.x)/2-16,(A.y+B.y)/2,'c','#8dceff');text((A.x+C.x)/2+17,(A.y+C.y)/2,'b','#8dceff');text(220,313,'a','#8dceff');
+if(progress>.12)text(A.x+17,(A.y+T.y)/2,'h','#f4c366');
+if(progress>.99){text(H.x,294,'H','#f4c366',16);text((B.x+H.x)/2,259,'p','#f4c366');text((H.x+C.x)/2,259,'k','#f4c366')}
+for(let n of ['a','h','p','k'])$('m-'+n).textContent=f(v[n]);
+$('status').textContent=progress===0?'ABC dik üçgeni':progress<1?'AH yüksekliği iniyor':'AH ⟂ BC';
+$('shapeValue').textContent='%'+Math.round(ratio*100);$('lengthValue').textContent=a+' birim';
+const r=rules[rule],[l,rhs,calc]=r[4](v);
+$('ruleTitle').textContent=r[0];$('formula').textContent=r[1];$('description').textContent=r[2];$('proof').textContent=r[3];$('calculation').textContent=calc;$('equality').textContent=`${f(l)} = ${f(rhs)} ✓`;
+document.querySelectorAll('[data-r]').forEach(b=>{b.classList.toggle('active',+b.dataset.r===rule);b.setAttribute('aria-pressed',String(+b.dataset.r===rule))});
+}
+function stop(){if(frame!==null)cancelAnimationFrame(frame);frame=null}
+function drop(){stop();if(progress===1)progress=0;const from=progress;let start=null;function tick(t){if(start===null)start=t;progress=Math.min(1,from+(1-from)*(t-start)/1250);draw();if(progress<1)frame=requestAnimationFrame(tick);else frame=null}frame=requestAnimationFrame(tick)}
+$('drop').addEventListener('click',drop);
+$('reset').addEventListener('click',()=>{stop();ratio=.64;a=10;progress=0;rule=0;$('shape').value=64;$('length').value=10;draw()});
+$('shape').addEventListener('input',e=>{ratio=+e.target.value/100;draw()});
+$('length').addEventListener('input',e=>{a=+e.target.value;draw()});
+document.querySelectorAll('[data-r]').forEach(b=>b.addEventListener('click',()=>{stop();rule=+b.dataset.r;progress=1;draw()}));
+$('prev').addEventListener('click',()=>{stop();rule=(rule+3)%4;progress=1;draw()});
+$('next').addEventListener('click',()=>{stop();rule=(rule+1)%4;progress=1;draw()});
+const qs=[
+['a = 10, p = 6,4 ve k = 3,6 ise h kaçtır?',['3,6','4,8','6,4'],1,'h² = p·k = 23,04 ⇒ h = 4,8.'],
+['a = 10 ve p = 6,4 ise c kaçtır?',['6','8','10'],1,'c² = a·p = 64 ⇒ c = 8.'],
+['a = 10 ve k = 3,6 ise b kaçtır?',['4,8','6','8'],1,'b² = a·k = 36 ⇒ b = 6.'],
+['b = 6, c = 8 ve a = 10 ise h kaçtır?',['4,8','5','6'],0,'b·c = a·h ⇒ 48 = 10h ⇒ h = 4,8.']
+];
+function showQuestion(){let q=qs[quiz];$('question').textContent=q[0];$('answers').replaceChildren();$('feedback').textContent='Bir seçenek işaretleyiniz.';q[1].forEach((s,i)=>{let b=document.createElement('button');b.textContent=s;b.addEventListener('click',()=>{let ok=i===q[2];$('feedback').textContent=(ok?'✓ Doğru! ':'✗ Yanlış. ')+q[3];$('feedback').style.color=ok?'#77e2b2':'#ffca85';[...$('answers').children].forEach(x=>x.disabled=true);b.classList.add('active')});$('answers').appendChild(b)})}
+$('newQuestion').addEventListener('click',()=>{quiz=(quiz+1)%qs.length;showQuestion()});
+draw();showQuestion();
+})();
+</script></body></html>
